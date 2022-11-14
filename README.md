@@ -1,16 +1,6 @@
 # scheduleyourday
 
-A new Flutter project.
+A schedule planner project
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+##Description:
+Prepare specific Schedules with multiple tasks in it. Choose which Schedule to keep activated. Also, the app gives notification about the task progress as per user preferences.
