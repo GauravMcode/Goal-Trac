@@ -136,10 +136,22 @@ class _MyScheduleState extends State<MySchedule> {
 
                             if (box.values.length != 0) {
                               // final listOfTasks = box.getAt(0)!. .toList().cast<Task>();
-                              print(box.values.where((element) => element.taskID == scheduleNo));
+                              // print(box.values.where((element) => element.taskID == scheduleNo));
                             }
-                            List<Task> tasksList = box.values.where((element) => element.taskID == scheduleNo).toList();
 
+                            Map<dynamic, Task> mapAll = box.toMap();
+                            Map<dynamic, Task> mapSchedlueNo = {};
+                            mapAll.values.forEach((element) {
+                              if (element.taskID == scheduleNo) {
+                                mapSchedlueNo.addAll({element.key: element});
+                              }
+                            });
+                            List<Task> tasksList = mapSchedlueNo.values.toList();
+                            final keysList = mapSchedlueNo.keys.toList();
+                            // print("task id: ${tasksList[0].taskID}");
+                            print(keysList);
+                            print(mapAll);
+                            print(mapSchedlueNo);
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -172,17 +184,27 @@ class _MyScheduleState extends State<MySchedule> {
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Text("Task ${(index + 1).toString()}"),
-                                                    IconButton(
-                                                        onPressed: (() {
-                                                          editTask(scheduleNo, task, index, context, height, width, _formKey);
-                                                        }),
-                                                        icon: Icon(Icons.edit))
+                                                    Row(
+                                                      children: [
+                                                        IconButton(
+                                                            onPressed: (() {
+                                                              editTask(scheduleNo, task, keysList[index], context, height, width, _formKey);
+                                                            }),
+                                                            icon: Icon(Icons.edit)),
+                                                        IconButton(
+                                                          onPressed: (() {
+                                                            box.delete(keysList[index]);
+                                                          }),
+                                                          icon: Icon(Icons.delete),
+                                                        )
+                                                      ],
+                                                    )
                                                   ],
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    Text(box.getAt(index)!.taskName.toString(), style: const TextStyle(fontSize: 20)),
+                                                    Text(task.taskName, style: const TextStyle(fontSize: 20)),
                                                     !(context.read<ExpandItCubit>().state && context.read<ExpandTasksList>().state.contains(index))
                                                         ? IconButton(
                                                             onPressed: () {
@@ -216,7 +238,7 @@ class _MyScheduleState extends State<MySchedule> {
                                                               SizedBox(width: width * 0.02),
                                                             ],
                                                           ),
-                                                          Text(box.getAt(index)!.description.toString()),
+                                                          Text(task.description.toString()),
                                                           Text("Type of Task: ${task.type == "1" ? "Daily" : "Range of Dates"}"),
                                                           task.dailyTimeRange != null ? Text(task.dailyTimeRange!.toString()) : Text("$displayDate1-$displayDate2"),
                                                         ],

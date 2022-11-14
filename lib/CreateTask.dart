@@ -65,9 +65,10 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
     editMode //todo: work for the edit mode
         ? box.putAt(index, task)
         : numberOfTasks == 0
-            ? box.put("$scheduleNo", task)
-            : box.putAll(mapT);
-    print("Task Saved");
+            ? box.add(task)
+            : box.add(task);
+
+    editMode ? print("task edited saved at index $index with schedule No $scheduleNo") : print("Task Saved");
     Navigator.pop(context);
   }
 

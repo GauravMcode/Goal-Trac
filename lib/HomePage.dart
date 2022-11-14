@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     //   });
     // }
 
-    Future<Widget> bottomSheet(BuildContext context, double height, double width, {int scheduleNo = 0}) async {
+    Future<Widget> bottomSheet(BuildContext context, double height, double width, {int scheduleNo = 1}) async {
       context.read<BottomSheetShownCubit>().openSheet();
       setState(() {});
       print(scheduleNo);
@@ -218,7 +218,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
                     if (!context.read<BottomSheetShownCubit>().state && createText == "New Schedule") {
-                      bottomSheet(context, height, width);
+                      final box = Boxes.getSchedules();
+                      List listOfKeys = [];
+                      Map<dynamic, Task> mapAll = box.toMap();
+                      if (mapAll.length != 0) {
+                        mapAll.values.forEach((element) {
+                          listOfKeys.add(element.taskID);
+                        });
+                      }
+                      List Schedules = listOfKeys.toSet().toList();
+                      bottomSheet(context, height, width, scheduleNo: Schedules.length);
                     }
 
                     setState(() {
@@ -260,143 +269,177 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   animation: _animation3 ?? _animationController3,
                   builder: (context, child) {
                     return Positioned(
-                      top: height * 0.2 * (1 - _animationController3.value),
-                      left: width * 0.1,
+                      top: height * 0.15 * (1 - _animationController3.value),
+                      left: 0,
                       // bottom: height * 0.05 * (1 - _animationController3.value),
                       child: ValueListenableBuilder<Box<Task>>(
                         valueListenable: Boxes.getSchedules().listenable(),
                         builder: (context, box, child) {
-                          List listOfKeys = box.keys.toList();
-                          List keysList = [];
-                          if (listOfKeys.length != 0) {
-                            for (var i = 1; i < listOfKeys.length; i++) {
-                              if (listOfKeys[i] != listOfKeys[i - 1]) {
-                                keysList.add(listOfKeys[i]);
-                              }
-                            }
+                          List listOfKeys = [];
+                          Map<dynamic, Task> mapAll = box.toMap();
+                          if (mapAll.length != 0) {
+                            mapAll.values.forEach((element) {
+                              listOfKeys.add(element.taskID);
+                            });
                           }
-
-                          return AnimatedContainer(
-                            curve: Curves.ease,
-                            duration: Duration(milliseconds: 1000),
-                            width: width,
-                            height: height * 0.8 * (1 - _animationController3.value),
-                            child: ListView(
-                                children: List.generate(keysList.length, (index) {
-                              String s = keysList[index].toString();
-                              int schedule = int.parse(s);
-                              List<Task> tasksList = box.values.where((element) => element.taskID == schedule).toList();
-                              String scheduleName = tasksList[0].taskName;
-                              return Column(
-                                children: [
-                                  CustomPaint(
-                                    painter: LogoCustomPainter1(false),
-                                    child: Container(
-                                      // padding: EdgeInsets.only(right: width * 0.1),
-                                      alignment: Alignment.topCenter,
-                                      width: width * 0.85,
-                                      height: height * 0.35,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Column(
+                          print(listOfKeys);
+                          //to get unique scheduleNo:
+                          List keysList = listOfKeys.toSet().toList();
+                          // if (listOfKeys.length != 0) {
+                          //   for (var i = 1; i < listOfKeys.length; i++) {
+                          //     if (listOfKeys[i] != listOfKeys[i - 1]) {
+                          //       keysList.add(listOfKeys[i]);
+                          //     }
+                          //   }
+                          // }
+                          print(listOfKeys.toSet().toList());
+                          print(keysList);
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: listOfKeys.length != 0
+                                    ? AnimatedContainer(
+                                        curve: Curves.ease,
+                                        duration: Duration(milliseconds: 1000),
+                                        height: height * 0.05 * (1 - _animationController3.value),
+                                        width: width,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(gradient: LinearGradient(colors: colors1)),
+                                        child: Text("Schedules: ",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            )),
+                                      )
+                                    : Container(),
+                              ),
+                              AnimatedContainer(
+                                padding: EdgeInsets.only(left: width * 0.1),
+                                duration: Duration(milliseconds: 1000),
+                                curve: Curves.ease,
+                                width: width,
+                                height: height * 0.8 * (1 - _animationController3.value),
+                                child: ListView(
+                                    children: List.generate(keysList.length, (index) {
+                                  String s = keysList[index].toString();
+                                  int schedule = int.parse(s);
+                                  List<Task> tasksList = box.values.where((element) => element.taskID == schedule).toList();
+                                  String scheduleName = "hello world";
+                                  return Column(
+                                    children: [
+                                      CustomPaint(
+                                        painter: LogoCustomPainter1(false),
+                                        child: Container(
+                                          // padding: EdgeInsets.only(right: width * 0.1),
+                                          alignment: Alignment.topCenter,
+                                          width: width * 0.85,
+                                          height: height * 0.35,
+                                          child: Row(
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
-                                              SizedBox(
-                                                height: height * 0.025,
-                                              ),
-                                              Row(
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
                                                 children: [
                                                   SizedBox(
-                                                    width: width * 0.1,
+                                                    height: height * 0.025,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: width * 0.1,
+                                                      ),
+                                                      Container(
+                                                        width: width * 0.25,
+                                                        alignment: Alignment.topRight,
+                                                        child: Text(
+                                                          "Schedule ${index + 1}",
+                                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: height * 0.02,
+                                                  ),
+                                                  Center(
+                                                    child: Text("Tasks(${tasksList.length}):", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                                  ),
+                                                  SizedBox(
+                                                    height: height * 0.01,
                                                   ),
                                                   Container(
-                                                    width: width * 0.25,
-                                                    alignment: Alignment.topRight,
-                                                    child: Text(
-                                                      scheduleName.length > 10 ? "${"Name:".substring(0, 10)}..." : scheduleName,
-                                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: height * 0.02,
-                                              ),
-                                              Center(
-                                                child: Text("Tasks(${tasksList.length}):", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                              ),
-                                              SizedBox(
-                                                height: height * 0.01,
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.all(10.0),
-                                                margin: EdgeInsets.only(left: width * 0.01),
-                                                decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), borderRadius: BorderRadius.circular(20.0)),
-                                                width: width * 0.4,
-                                                height: height * 0.15,
-                                                child: Scrollbar(
-                                                  interactive: true,
-                                                  thumbVisibility: true,
-                                                  child: ListView.builder(
-                                                      itemCount: tasksList.length,
-                                                      itemBuilder: ((context, index) {
-                                                        return Container(
-                                                          width: width * 0.2,
-                                                          height: height * 0.05,
-                                                          child: ListView(
-                                                            scrollDirection: Axis.horizontal,
-                                                            children: [
-                                                              Text(tasksList[index].taskName, style: TextStyle(fontWeight: FontWeight.bold)),
-                                                              SizedBox(
-                                                                width: width * 0.01,
+                                                    padding: EdgeInsets.all(10.0),
+                                                    margin: EdgeInsets.only(left: width * 0.01),
+                                                    decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), borderRadius: BorderRadius.circular(20.0)),
+                                                    width: width * 0.4,
+                                                    height: height * 0.15,
+                                                    child: Scrollbar(
+                                                      interactive: true,
+                                                      child: ListView.builder(
+                                                          itemCount: tasksList.length,
+                                                          itemBuilder: ((context, index) {
+                                                            return Container(
+                                                              width: width * 0.2,
+                                                              height: height * 0.05,
+                                                              child: Scrollbar(
+                                                                interactive: true,
+                                                                child: ListView(
+                                                                  scrollDirection: Axis.horizontal,
+                                                                  children: [
+                                                                    Text(tasksList[index].taskName),
+                                                                    SizedBox(
+                                                                      width: width * 0.01,
+                                                                    ),
+                                                                    Text(" : ${tasksList[index].type == "1" ? "Daily" : "Range of Dates"}"),
+                                                                  ],
+                                                                ),
                                                               ),
-                                                              Text(" : ${tasksList[index].type == "1" ? "Daily" : "Range of Dates"}"),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      })),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: width * 0.05,
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), shape: BoxShape.circle),
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          setCreateValues(width, height);
-                                                        });
-                                                        bottomSheet(context, height, width, scheduleNo: schedule);
-                                                      },
-                                                      icon: Icon(Icons.edit_note_outlined),
-                                                      iconSize: 100,
-                                                      color: colors1[1],
+                                                            );
+                                                          })),
                                                     ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: width * 0.05,
+                                                      ),
+                                                      Container(
+                                                        decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), shape: BoxShape.circle),
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              setCreateValues(width, height);
+                                                            });
+                                                            bottomSheet(context, height, width, scheduleNo: schedule);
+                                                          },
+                                                          icon: Icon(Icons.edit_note_outlined),
+                                                          iconSize: 100,
+                                                          color: colors1[1],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
                                             ],
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: height * 0.05,
-                                  )
-                                ],
-                              );
-                            })),
+                                      SizedBox(
+                                        height: height * 0.05,
+                                      )
+                                    ],
+                                  );
+                                })),
+                              ),
+                            ],
                           );
                         },
                       ),
