@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scheduleyourday/Screens/Logic/boxes.dart';
-import '../../Model/Task.dart';
+import 'package:scheduleyourday/Logic/boxes.dart';
+import '../Model/Task.dart';
 
 Map<String, Map<String, Map<String, dynamic>>>? toSent;
 // final box = Boxes.getSchedules()

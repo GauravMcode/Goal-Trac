@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:scheduleyourday/Model/Task.dart';
-import 'package:scheduleyourday/Screens/Logic/boxes.dart';
-import '../Screens/Logic/LogicComponent.dart';
+import 'package:scheduleyourday/Logic/boxes.dart';
+import '../Logic/LogicComponent.dart';
 import 'package:scheduleyourday/view_Methods/DateTimePicker/omni_datetime_picker.dart';
 import 'package:scheduleyourday/Screens/HomePage.dart';
 

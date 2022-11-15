@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:scheduleyourday/Screens/Logic/LogicComponent.dart';
+import 'package:scheduleyourday/Logic/LogicComponent.dart';
 import 'package:scheduleyourday/view_Methods/Schedule.dart';
 import 'package:scheduleyourday/Model/Task.dart';
-import 'package:scheduleyourday/Screens/Logic/boxes.dart';
+import 'package:scheduleyourday/Logic/boxes.dart';
 import '../view_Methods/custompaints.dart';
 import '../view_Methods/LogoAnimations.dart';
 import 'dart:math' as math;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scheduleyourday/Screens/Logic/LogicComponent.dart';
+import 'package:scheduleyourday/Logic/LogicComponent.dart';
 import 'package:scheduleyourday/view_Methods/Schedule.dart';
 import 'package:scheduleyourday/Model/Task.dart';
 import '../Screens/HomePage.dart';

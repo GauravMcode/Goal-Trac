@@ -4,10 +4,10 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scheduleyourday/Screens/HomePage.dart';
 import 'package:scheduleyourday/Model/Task.dart';
-import 'package:scheduleyourday/Screens/Logic/boxes.dart';
+import 'package:scheduleyourday/Logic/boxes.dart';
 import 'custompaints.dart';
 import 'CreateTask.dart';
-import '../Screens/Logic/LogicComponent.dart';
+import '../Logic/LogicComponent.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math' as math;
 
