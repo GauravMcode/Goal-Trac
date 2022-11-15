@@ -5,7 +5,7 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:scheduleyourday/Model/Task.dart';
 import 'package:scheduleyourday/Screens/Logic/boxes.dart';
 import '../Screens/Logic/LogicComponent.dart';
-import 'package:scheduleyourday/DateTimePicker/omni_datetime_picker.dart';
+import 'package:scheduleyourday/view_Methods/DateTimePicker/omni_datetime_picker.dart';
 import 'package:scheduleyourday/Screens/HomePage.dart';
 
 createTask(int scheduleNo, BuildContext context, double height, double width, formKey,
