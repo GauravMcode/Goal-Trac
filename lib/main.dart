@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scheduleyourday/LogicComponent.dart';
-import 'HomePage.dart';
+import 'package:scheduleyourday/Screens/Logic/LogicComponent.dart';
+import 'Screens/HomePage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'Task.dart';
+import 'Model/Task.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
