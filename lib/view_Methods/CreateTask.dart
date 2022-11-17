@@ -63,7 +63,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
     mapT.addAll({"$scheduleNo+1": task});
 
     editMode //todo: work for the edit mode
-        ? box.putAt(index, task)
+        ? box.put(index, task)
         : numberOfTasks == 0
             ? box.add(task)
             : box.add(task);

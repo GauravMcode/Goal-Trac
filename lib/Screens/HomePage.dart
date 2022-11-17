@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -33,6 +34,8 @@ List<Color> colors2 = [
 
   Color.fromARGB(255, 93, 1, 109),
 ];
+
+bool? isCompleted = false;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -502,87 +505,183 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         );
                                       })),
                                 ),
-                                Card(
-                                  color: Color.fromARGB(0, 255, 255, 255),
-                                  margin: EdgeInsets.only(left: width * 0.025, right: width * 0.025),
-                                  elevation: 20,
-                                  child: GlassmorphicContainer(
-                                    width: width * 0.95,
-                                    height: height * 0.7,
-                                    alignment: Alignment.topCenter,
-                                    blur: 10,
-                                    borderGradient: LinearGradient(colors: [Color(0xFF0FFFF).withOpacity(1), Color(0xFFFFFFF), Color(0xFF0FFFF).withOpacity(1)]),
-                                    linearGradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [Color(0xFF0FFFF).withOpacity(0.2), Color(0xFF0FFFF).withOpacity(0.2)],
-                                    ),
-                                    border: 2,
-                                    borderRadius: 20,
-                                    child: Column(
-                                      children: [
-                                        StreamBuilder(
-                                          stream: timeNow(),
-                                          builder: (context, child) {
-                                            return Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Text("${context.read<DateTimeNowCubit>().state.day}-${context.read<DateTimeNowCubit>().state.month}-${context.read<DateTimeNowCubit>().state.year}",
-                                                    style: GoogleFonts.acme()),
-                                                Text("Today's Tasks"),
-                                                Text("${TimeOfDay.fromDateTime(context.read<DateTimeNowCubit>().state).format(context)} ${context.read<DateTimeNowCubit>().state.second} seconds",
-                                                    style: GoogleFonts.acme()),
-                                              ],
-                                            );
-                                          },
+                                AnimatedContainer(
+                                  duration: Duration(seconds: 1),
+                                  margin: EdgeInsets.only(top: width * _animationController3.value),
+                                  child: Builder(builder: (context) {
+                                    List<Task> todayTasksD = [];
+                                    List<Task> todayTasksRcomp = []; // initial and present lies completely on present day
+                                    List<Task> todayTasksRstart = []; //range initial lies on present day
+                                    List<Task> todayTasksRend = []; //range end lies on present day
+                                    List<Task> todayTasksR = []; //presentDay lies in the range
+                                    mapAll.values.forEach((element) {
+                                      if (element.type == "1") {
+                                        todayTasksD.add(element);
+                                      } else {
+                                        if (element.dateTimeRange![0].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11) &&
+                                            element.dateTimeRange![1].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11)) {
+                                          todayTasksRcomp.add(element);
+                                        } else if (element.dateTimeRange![0].toString().substring(0, 11) == DateTime.now().toString().substring(0, 11)) {
+                                          todayTasksRstart.add(element);
+                                        } else if (element.dateTimeRange![1].toString().substring(0, 11) == DateTime.now().toString().substring(0, 11)) {
+                                          todayTasksRend.add(element);
+                                        } else if (element.dateTimeRange![1].difference(context.read<DateTimeNowCubit>().state).inHours > (24 - context.read<DateTimeNowCubit>().state.hour) &&
+                                            context.read<DateTimeNowCubit>().state.difference(element.dateTimeRange![0]).inHours > context.read<DateTimeNowCubit>().state.hour) {
+                                          todayTasksR.add(element);
+                                        }
+                                      }
+                                    });
+                                    return Card(
+                                      color: Color.fromARGB(0, 255, 255, 255),
+                                      margin: EdgeInsets.only(left: width * 0.025, right: width * 0.025),
+                                      elevation: 20,
+                                      child: GlassmorphicContainer(
+                                        width: width * 0.95,
+                                        height: height * 0.8,
+                                        alignment: Alignment.topCenter,
+                                        blur: 10,
+                                        borderGradient: LinearGradient(colors: [Color(0xFF0FFFF).withOpacity(1), Color(0xFFFFFFF), Color(0xFF0FFFF).withOpacity(1)]),
+                                        linearGradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [Color(0xFF0FFFF).withOpacity(0.2), Color(0xFF0FFFF).withOpacity(0.2)],
                                         ),
-                                        Text("1. duration < 24 hrs "),
-                                        StreamBuilder(
-                                            stream: timeNow(),
-                                            builder: (context, snapshot) {
-                                              return Expanded(
-                                                child: Builder(builder: (context) {
-                                                  List<Task> todayTasksD = [];
-                                                  List<Task> todayTasksRcomp = [];
-                                                  List<Task> todayTasksRstart = [];
-                                                  List<Task> todayTasksRend = [];
-                                                  mapAll.values.forEach((element) {
-                                                    if (element.type == "1") {
-                                                      todayTasksD.add(element);
-                                                    } else {
-                                                      if (element.dateTimeRange![0].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11) &&
-                                                          element.dateTimeRange![0].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11)) {
-                                                        todayTasksRcomp.add(element);
-                                                      }
-                                                      // }else if(element.dateTimeRange![0].toString().substring(0, 11) == DateTime.now().toString().substring(0, 11) && element.dateTimeRange![0].hour!=){
+                                        border: 2,
+                                        borderRadius: 20,
+                                        child: Column(
+                                          children: [
+                                            StreamBuilder(
+                                              stream: timeNow(),
+                                              builder: (context, child) {
+                                                return Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                    Text("${context.read<DateTimeNowCubit>().state.day}-${context.read<DateTimeNowCubit>().state.month}-${context.read<DateTimeNowCubit>().state.year}",
+                                                        style: GoogleFonts.acme()),
+                                                    Text("Today's Tasks"),
+                                                    Text("${TimeOfDay.fromDateTime(context.read<DateTimeNowCubit>().state).format(context)} ${context.read<DateTimeNowCubit>().state.second} seconds",
+                                                        style: GoogleFonts.acme()),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                            Text("1. On this Day"),
+                                            StreamBuilder(
+                                                stream: timeNow(),
+                                                builder: (context, snapshot) {
+                                                  return Expanded(
+                                                    child: DataTable2(
+                                                      columnSpacing: 0,
+                                                      horizontalMargin: 12,
+                                                      columns: [
+                                                        DataColumn2(
+                                                          label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.28, color: Colors.yellow, child: Text("Tasks")),
+                                                          fixedWidth: width * 0.28,
+                                                        ),
+                                                        DataColumn2(
+                                                          label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: Text("Start at")),
+                                                          fixedWidth: width * 0.18,
+                                                        ),
+                                                        DataColumn2(
+                                                          label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: Text("Time Left")),
+                                                          fixedWidth: width * 0.18,
+                                                        ),
+                                                        DataColumn2(
+                                                          label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.24, color: Colors.yellow, child: Text("status")),
+                                                          fixedWidth: width * 0.24,
+                                                        ),
+                                                      ],
+                                                      rows: List.generate(todayTasksD.length, (index) {
+                                                        int leftHours = 0;
+                                                        int leftMinutes = 0;
+                                                        int leftSeconds = 0;
+                                                        int presentHour = context.read<DateTimeNowCubit>().state.hour;
+                                                        int presentMinutes = context.read<DateTimeNowCubit>().state.minute;
+                                                        String startTime = todayTasksD[index].dailyTimeRange![0];
+                                                        int startTimeHour = startTime.length == 7 ? int.parse(startTime.substring(0, 1)) : int.parse(startTime.substring(0, 2));
+                                                        startTimeHour = startTime.substring(startTime.length - 2) == "AM" && startTimeHour == 12 ? 0 : startTimeHour;
+                                                        startTimeHour = startTime.substring(startTime.length - 2) == "PM" ? startTimeHour + 12 : startTimeHour;
+                                                        int startTimeMinutes = startTime.length == 7 ? int.parse(startTime.substring(2, 4)) : int.parse(startTime.substring(3, 5));
+                                                        String endTime = todayTasksD[index].dailyTimeRange![1];
+                                                        int endTimeHour = startTime.length == 7 ? int.parse(endTime.substring(0, 1)) : int.parse(startTime.substring(0, 2));
+                                                        endTimeHour = endTime.substring(endTime.length - 2) == "AM" && endTimeHour == 12 ? 0 : endTimeHour;
+                                                        endTimeHour = endTime.substring(endTime.length - 2) == "PM" ? endTimeHour + 12 : endTimeHour;
+                                                        int endTimeMinutes = startTime.length == 7 ? int.parse(endTime.substring(2, 4)) : int.parse(endTime.substring(3, 5));
+                                                        List<int> timeLeft = [leftHours, leftMinutes];
+                                                        print("$startTimeHour : $startTimeMinutes present: $presentHour : $presentMinutes, end: $endTimeHour: $endTimeMinutes");
+                                                        print(startTimeHour * 60 + startTimeMinutes);
+                                                        print(presentHour * 60 + presentMinutes);
+                                                        print(startTime.length);
+                                                        print(int.parse(startTime.substring(3, 5)));
 
-                                                      // }
-                                                    }
-                                                  });
-                                                  return DataTable2(
-                                                    columnSpacing: 12,
-                                                    horizontalMargin: 12,
-                                                    columns: [
-                                                      DataColumn2(label: Text("Tasks"), fixedWidth: width * 0.3, size: ColumnSize.L),
-                                                      DataColumn2(label: Text("Start at"), size: ColumnSize.S),
-                                                      DataColumn2(label: Text("Duration"), size: ColumnSize.S),
-                                                      DataColumn2(label: Text("Status"), size: ColumnSize.M),
-                                                    ],
-                                                    rows: [],
+                                                        if ((startTimeHour * 60 + startTimeMinutes) > (presentHour * 60 + presentMinutes)) {
+                                                          print("$index show duration");
+                                                          //show duration
+                                                          leftHours = endTimeHour - startTimeHour;
+                                                          leftMinutes = ((60 * endTimeHour + endTimeMinutes) - (60 * startTimeHour + startTimeMinutes)) % 60;
+                                                          print(leftMinutes);
+                                                          timeLeft.clear();
+                                                          timeLeft.addAll([leftHours, leftMinutes]);
+                                                          // print(timeLeft);
+                                                          print(timeLeft);
+                                                        } else if ((startTimeHour * 60 + startTimeMinutes) <= (presentHour * 60 + presentMinutes) &&
+                                                            (presentHour * 60 + presentMinutes) < (endTimeHour * 60 + endTimeMinutes)) {
+                                                          print("$index show time left");
+                                                          //show time left -- else show 0:0
+                                                          leftHours = endTimeHour - presentHour;
+                                                          leftMinutes = ((60 * endTimeHour + endTimeMinutes) - (60 * presentHour + presentMinutes)) % 60;
+                                                          timeLeft.clear();
+                                                          timeLeft.addAll([leftHours - 1, (leftMinutes == 0 ? 59 : leftMinutes - 1), (60 - context.read<DateTimeNowCubit>().state.second - 1)]);
+                                                        } else {
+                                                          print("$index task ended");
+                                                        }
+                                                        print(isCompleted);
+
+                                                        return DataRow(cells: [
+                                                          DataCell(Text(todayTasksD[index].taskName, style: GoogleFonts.acme())),
+                                                          DataCell(Text(todayTasksD[index].dailyTimeRange![0], style: GoogleFonts.acme())),
+                                                          DataCell(Text(
+                                                              "${timeLeft[0]}:${timeLeft[1] < 10 ? "0${timeLeft[1]}" : timeLeft[1]}${timeLeft.length == 3 ? ":${timeLeft[2] < 10 ? "0${timeLeft[2]}" : timeLeft[2]}" : ""}",
+                                                              style: GoogleFonts.acme())),
+                                                          DataCell(
+                                                            timeLeft.length == 3
+                                                                ? Text("on-going", style: GoogleFonts.acme(color: Colors.green))
+                                                                : timeLeft[0] == 0 && timeLeft[1] == 0
+                                                                    ? Row(
+                                                                        children: [
+                                                                          Text("Done?", style: GoogleFonts.acme(color: Colors.red)),
+                                                                          Checkbox(
+                                                                              tristate: false,
+                                                                              value: isCompleted,
+                                                                              onChanged: ((value) {
+                                                                                setState(() {
+                                                                                  isCompleted = !isCompleted!;
+                                                                                });
+                                                                              }))
+                                                                        ],
+                                                                      )
+                                                                    : Text("Yet to Start", style: GoogleFonts.acme(color: Colors.yellow)),
+                                                          )
+                                                        ]);
+                                                      }),
+                                                    ),
                                                   );
                                                 }),
-                                              );
-                                            }),
-                                        Text("2. duration >= 24"),
-                                        Expanded(
-                                          child: DataTable2(columns: [
-                                            DataColumn2(label: Text("Tasks")),
-                                            DataColumn2(label: Text("Status")),
-                                          ], rows: []),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                                            SizedBox(
+                                              height: height * 0.05,
+                                            ),
+                                            Text("2.specific Date"),
+                                            Expanded(
+                                              child: DataTable2(columns: [
+                                                DataColumn2(label: Text("Tasks")),
+                                                DataColumn2(label: Text("Status")),
+                                              ], rows: []),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
                                 ),
                               ],
                             ),
