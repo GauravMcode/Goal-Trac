@@ -47,6 +47,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => BottomSheetShownCubit(),
         ),
+        BlocProvider(
+          create: (context) => DateTimeNowCubit(),
+        ),
       ],
       child: MaterialApp(
         title: "schedule app",

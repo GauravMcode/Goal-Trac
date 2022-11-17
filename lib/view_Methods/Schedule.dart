@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scheduleyourday/Screens/HomePage.dart';
 import 'package:scheduleyourday/Model/Task.dart';
@@ -253,33 +252,48 @@ class _MyScheduleState extends State<MySchedule> {
                                     }),
                                   ),
                                 ),
-                                MaterialButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text("Error"),
-                                            content: Text("Do you want to delete All Schedules?"),
-                                            actions: <Widget>[
-                                              MaterialButton(
-                                                child: Text("Confirm"),
-                                                onPressed: () {
-                                                  box.clear();
-                                                },
-                                              ),
-                                              MaterialButton(
-                                                child: Text("cancel"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        });
-                                  },
-                                  child: Text("Clear All Schedules"),
-                                  color: Colors.amber,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    MaterialButton(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text("Delete All Schedules and Tasks"),
+                                                content: Text("Do you want to delete All Schedules?"),
+                                                actions: <Widget>[
+                                                  MaterialButton(
+                                                    child: Text("Confirm"),
+                                                    onPressed: () {
+                                                      box.clear();
+                                                    },
+                                                  ),
+                                                  MaterialButton(
+                                                    child: Text("cancel"),
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      child: Text("Clear All Schedules"),
+                                      color: Colors.amber,
+                                    ),
+                                    MaterialButton(
+                                      onPressed: () {
+                                        context.read<BottomSheetShownCubit>().closedSheet();
+
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("Back"),
+                                      color: Colors.amber,
+                                    )
+                                  ],
                                 )
                               ],
                             );
@@ -319,14 +333,14 @@ class _MyScheduleState extends State<MySchedule> {
   }
 }
 
-Widget taskForm(BuildContext context, Key key) {
-  return Form(
-    key: key,
-    child: Column(
-      children: <Widget>[TextFormField()],
-    ),
-  );
-}
+// Widget taskForm(BuildContext context, Key key) {
+//   return Form(
+//     key: key,
+//     child: Column(
+//       children: <Widget>[TextFormField()],
+//     ),
+//   );
+// }
 
 // Column(
 //                   children: [

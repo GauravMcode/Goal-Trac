@@ -145,3 +145,11 @@ class BottomSheetShownCubit extends Cubit<bool> {
     emit(true);
   }
 }
+
+class DateTimeNowCubit extends Cubit<DateTime> {
+  DateTimeNowCubit() : super(DateTime.now());
+
+  emitDateTime() {
+    emit(DateTime.now());
+  }
+}

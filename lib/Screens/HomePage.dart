@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scheduleyourday/Logic/LogicComponent.dart';
+import 'package:scheduleyourday/Screens/ScheduleDetails.dart';
 import 'package:scheduleyourday/view_Methods/Schedule.dart';
 import 'package:scheduleyourday/Model/Task.dart';
 import 'package:scheduleyourday/Logic/boxes.dart';
@@ -9,6 +11,9 @@ import '../view_Methods/custompaints.dart';
 import '../view_Methods/LogoAnimations.dart';
 import 'dart:math' as math;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:data_table_2/data_table_2.dart';
 
 //maintain 2
 List<Color> colors = [
@@ -59,7 +64,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     fadeLogo ??= 0.0;
 
     _animationController2 = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
-    _animationController3 = AnimationController(vsync: this, reverseDuration: Duration(milliseconds: 1500), value: 1.0);
+    _animationController3 = AnimationController(vsync: this, reverseDuration: Duration(milliseconds: 2000), value: 1.0);
+    context.read<DateTimeNowCubit>().emitDateTime();
   }
 
   @override
@@ -88,7 +94,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (_animationController2.value == 0.0 && animationStatus1 != "AnimationStatus.completed") {
-      _animationController1 = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+      _animationController1 = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
       _animationController1.forward();
     }
 
@@ -141,15 +147,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     //   });
     // }
 
-    Future<Widget> bottomSheet(BuildContext context, double height, double width, {int scheduleNo = 1}) async {
+    Future<Widget> bottomSheet(BuildContext context, double height, double width, {int scheduleNo = 0}) async {
       context.read<BottomSheetShownCubit>().openSheet();
+      AnimationController _animationController4 = AnimationController(vsync: this, duration: Duration(seconds: 1));
+      _animationController4.forward;
       setState(() {});
       print(scheduleNo);
       return await showModalBottomSheet(
+        transitionAnimationController: _animationController4,
         enableDrag: false,
-        elevation: 100.0,
+        elevation: 40.0,
         isDismissible: false,
-        barrierColor: Color.fromARGB(0, 150, 16, 16),
+        // barrierColor: Color.fromARGB(0, 255, 253, 253),
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: colors[1], width: 3.0, strokeAlign: StrokeAlign.inside),
@@ -182,8 +191,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
     }
 
+    Stream timeNow() async* {
+      while (true) {
+        await Future.delayed(Duration(seconds: 1));
+        yield context.read<DateTimeNowCubit>().emitDateTime();
+      }
+    }
+
+    // timeNow().listen(
+    //   (event) => context.read<DateTimeNowCubit>().emitDateTime(),
+    // );
+
     return BlocBuilder<BottomSheetShownCubit, bool>(
-      builder: (context, state) {
+      builder: (context, boolState) {
+        if (!context.read<BottomSheetShownCubit>().state && createText == "Schedule") {
+          setCreateValues(width, height);
+        }
+        context.read<DateTimeNowCubit>().emitDateTime();
+
         return Scaffold(
           backgroundColor: colors[1],
           body: Stack(
@@ -211,7 +236,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   }),
               _animation3 == null
                   ? logoAppearWidget(height, width, _animationController1, _animationController2, _animationController3, scalingLogo, transformLogo)
-                  : logoFadeWidget(height, width, _animation3, scalingLogo, transformLogo),
+                  : logoFadeWidget(height, width, _animation3, scalingLogo, transformLogo, _animationController3),
               Positioned(
                 left: 0,
                 top: height * 0.07,
@@ -270,9 +295,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   animation: _animation3 ?? _animationController3,
                   builder: (context, child) {
                     return Positioned(
-                      top: height * 0.15 * (1 - _animationController3.value),
+                      top: height * 0.15,
                       left: 0,
-                      // bottom: height * 0.05 * (1 - _animationController3.value),
+                      right: 0,
+                      // bottom: height * 0.3 * (1 - _animationController3.value),
                       child: ValueListenableBuilder<Box<Task>>(
                         valueListenable: Boxes.getSchedules().listenable(),
                         builder: (context, box, child) {
@@ -295,151 +321,271 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           // }
                           print(listOfKeys.toSet().toList());
                           print(keysList);
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                alignment: Alignment.topLeft,
-                                child: listOfKeys.length != 0
-                                    ? AnimatedContainer(
-                                        curve: Curves.ease,
-                                        duration: Duration(milliseconds: 1000),
-                                        height: height * 0.05 * (1 - _animationController3.value),
-                                        width: width,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(gradient: LinearGradient(colors: colors1)),
-                                        child: Text("Schedules: ",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                            )),
-                                      )
-                                    : Container(),
-                              ),
-                              AnimatedContainer(
-                                padding: EdgeInsets.only(left: width * 0.1),
-                                duration: Duration(milliseconds: 1000),
-                                curve: Curves.ease,
-                                width: width,
-                                height: height * 0.8 * (1 - _animationController3.value),
-                                child: ListView(
-                                    children: List.generate(keysList.length, (index) {
-                                  String s = keysList[index].toString();
-                                  int schedule = int.parse(s);
-                                  List<Task> tasksList = box.values.where((element) => element.taskID == schedule).toList();
-                                  return Column(
-                                    children: [
-                                      CustomPaint(
-                                        painter: LogoCustomPainter1(false),
-                                        child: Container(
-                                          // padding: EdgeInsets.only(right: width * 0.1),
-                                          alignment: Alignment.topCenter,
-                                          width: width * 0.85,
-                                          height: height * 0.35,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    height: height * 0.025,
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        width: width * 0.1,
-                                                      ),
-                                                      Container(
-                                                        width: width * 0.25,
-                                                        alignment: Alignment.topRight,
-                                                        child: Text(
+                          return Container(
+                            width: width,
+                            height: height,
+                            child: ListView(
+                              children: [
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  child: listOfKeys.isNotEmpty
+                                      ? AnimatedContainer(
+                                          margin: EdgeInsets.only(right: width * _animationController3.value),
+                                          curve: Curves.ease,
+                                          duration: Duration(milliseconds: 1000),
+                                          height: height * 0.05,
+                                          width: width,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(gradient: LinearGradient(colors: colors1)),
+                                          child: const Text("Schedules: ", style: TextStyle(fontSize: 20)),
+                                        )
+                                      : Container(),
+                                ),
+                                SizedBox(height: height * 0.005),
+                                AnimatedContainer(
+                                  margin: EdgeInsets.only(left: width * _animationController3.value),
+                                  alignment: Alignment.topLeft,
+                                  duration: Duration(milliseconds: 1000),
+                                  curve: Curves.ease,
+                                  width: width * 2,
+                                  height: height * 0.295,
+                                  child: ScrollSnapList(
+                                      onItemFocus: (p0) {},
+                                      dynamicItemSize: true,
+                                      itemSize: width * 0.5,
+                                      itemCount: keysList.length,
+                                      itemBuilder: ((context, index) {
+                                        String s = keysList[index].toString();
+                                        int schedule = int.parse(s);
+                                        List<Task> tasksList = box.values.where((element) => element.taskID == schedule).toList();
+                                        double Chieght = height * 0.28;
+                                        double Cwidth = width * 0.5;
+                                        return Column(
+                                          children: [
+                                            Card(
+                                              elevation: 30,
+                                              borderOnForeground: true,
+                                              color: Color.fromARGB(0, 255, 255, 255),
+                                              child: GlassmorphicContainer(
+                                                alignment: Alignment.centerLeft,
+                                                padding: EdgeInsets.all(5),
+                                                blur: 10,
+                                                borderGradient: LinearGradient(
+                                                  colors: [Color(0xFF0FFFF).withOpacity(1), Color(0xFFFFFFF), Color(0xFF0FFFF).withOpacity(1)],
+                                                ),
+                                                linearGradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Color(0xFF0FFFF).withOpacity(0.2),
+                                                    Color(0xFF0FFFF).withOpacity(0.2),
+                                                  ],
+                                                ),
+                                                border: 2,
+                                                borderRadius: 20,
+                                                height: Chieght,
+                                                width: Cwidth,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        SizedBox(width: Cwidth * 0.025),
+                                                        Text(
                                                           "Schedule ${index + 1}",
-                                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: colors[1]),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: height * 0.02,
-                                                  ),
-                                                  Center(
-                                                    child: Text("Tasks(${tasksList.length}):", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                                  ),
-                                                  SizedBox(
-                                                    height: height * 0.01,
-                                                  ),
-                                                  Container(
-                                                    padding: EdgeInsets.all(10.0),
-                                                    margin: EdgeInsets.only(left: width * 0.01),
-                                                    decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), borderRadius: BorderRadius.circular(20.0)),
-                                                    width: width * 0.4,
-                                                    height: height * 0.15,
-                                                    child: Scrollbar(
-                                                      interactive: true,
-                                                      child: ListView.builder(
-                                                          itemCount: tasksList.length,
-                                                          itemBuilder: ((context, index) {
-                                                            return Container(
-                                                              width: width * 0.2,
-                                                              height: height * 0.05,
-                                                              child: Scrollbar(
-                                                                interactive: true,
-                                                                child: ListView(
-                                                                  scrollDirection: Axis.horizontal,
-                                                                  children: [
-                                                                    Text(tasksList[index].taskName),
-                                                                    SizedBox(
-                                                                      width: width * 0.01,
-                                                                    ),
-                                                                    Text(" : ${tasksList[index].type == "1" ? "Daily" : "Range of Dates"}"),
-                                                                  ],
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(width: Cwidth * 0.025),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(5.0),
+                                                              child: Container(
+                                                                decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), shape: BoxShape.circle),
+                                                                child: IconButton(
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      setCreateValues(width, height);
+                                                                    });
+                                                                    bottomSheet(context, height, width, scheduleNo: schedule);
+                                                                  },
+                                                                  icon: Icon(Icons.edit_note_outlined),
+                                                                  iconSize: 20,
+                                                                  color: colors1[1],
                                                                 ),
                                                               ),
-                                                            );
-                                                          })),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        width: width * 0.05,
-                                                      ),
-                                                      Container(
-                                                        decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), shape: BoxShape.circle),
-                                                        child: IconButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              setCreateValues(width, height);
-                                                            });
-                                                            bottomSheet(context, height, width, scheduleNo: schedule);
-                                                          },
-                                                          icon: Icon(Icons.edit_note_outlined),
-                                                          iconSize: 100,
-                                                          color: colors1[1],
+                                                            ),
+                                                            Container(
+                                                              decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), shape: BoxShape.circle),
+                                                              child: IconButton(
+                                                                onPressed: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      PageTransition(
+                                                                          child: ScheduleDetails(schedule, index + 1),
+                                                                          fullscreenDialog: true,
+                                                                          reverseDuration: Duration(milliseconds: 600),
+                                                                          duration: Duration(milliseconds: 800),
+                                                                          alignment: Alignment(0.0, -0.5),
+                                                                          type: PageTransitionType.size,
+                                                                          childCurrent: widget)
+                                                                      // MaterialPageRoute(builder: ((context) {
+                                                                      //   return ScheduleDetails(schedule, index + 1);
+                                                                      // })),
+                                                                      );
+                                                                },
+                                                                icon: Icon(Icons.open_in_new_rounded),
+                                                                iconSize: 20,
+                                                                color: colors1[1],
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: Chieght * 0.04),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        SizedBox(width: Cwidth * 0.3),
+                                                        Container(
+                                                            padding: EdgeInsets.all(5.0),
+                                                            decoration: BoxDecoration(gradient: LinearGradient(colors: colors2), borderRadius: BorderRadius.circular(15)),
+                                                            child: Text("Tasks(${tasksList.length}):",
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: colors1[0],
+                                                                  fontWeight: FontWeight.bold,
+                                                                ))),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: Chieght * 0.02),
+                                                    Container(
+                                                      alignment: Alignment.topLeft,
+                                                      padding: EdgeInsets.all(5.0),
+                                                      margin: EdgeInsets.only(left: Cwidth * 0.025),
+                                                      decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), borderRadius: BorderRadius.circular(20.0)),
+                                                      width: Cwidth * 0.95,
+                                                      height: Chieght * 0.5,
+                                                      child: Scrollbar(
+                                                        interactive: true,
+                                                        child: ListView.builder(
+                                                            itemCount: tasksList.length,
+                                                            itemBuilder: ((context, index) {
+                                                              return Row(
+                                                                children: [
+                                                                  Container(
+                                                                    width: Cwidth * 0.62,
+                                                                    child: SingleChildScrollView(
+                                                                      scrollDirection: Axis.horizontal,
+                                                                      child: Text(tasksList[index].taskName),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    " : ${tasksList[index].type == "1" ? "Daily" : "Range"}",
+                                                                    style: TextStyle(color: colors1[1]),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            })),
                                                       ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            SizedBox(
+                                                // height: height * 0.05,
+                                                )
+                                          ],
+                                        );
+                                      })),
+                                ),
+                                Card(
+                                  color: Color.fromARGB(0, 255, 255, 255),
+                                  margin: EdgeInsets.only(left: width * 0.025, right: width * 0.025),
+                                  elevation: 20,
+                                  child: GlassmorphicContainer(
+                                    width: width * 0.95,
+                                    height: height * 0.7,
+                                    alignment: Alignment.topCenter,
+                                    blur: 10,
+                                    borderGradient: LinearGradient(colors: [Color(0xFF0FFFF).withOpacity(1), Color(0xFFFFFFF), Color(0xFF0FFFF).withOpacity(1)]),
+                                    linearGradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [Color(0xFF0FFFF).withOpacity(0.2), Color(0xFF0FFFF).withOpacity(0.2)],
+                                    ),
+                                    border: 2,
+                                    borderRadius: 20,
+                                    child: Column(
+                                      children: [
+                                        StreamBuilder(
+                                          stream: timeNow(),
+                                          builder: (context, child) {
+                                            return Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text("${context.read<DateTimeNowCubit>().state.day}-${context.read<DateTimeNowCubit>().state.month}-${context.read<DateTimeNowCubit>().state.year}",
+                                                    style: GoogleFonts.acme()),
+                                                Text("Today's Tasks"),
+                                                Text("${TimeOfDay.fromDateTime(context.read<DateTimeNowCubit>().state).format(context)} ${context.read<DateTimeNowCubit>().state.second} seconds",
+                                                    style: GoogleFonts.acme()),
+                                              ],
+                                            );
+                                          },
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: height * 0.05,
-                                      )
-                                    ],
-                                  );
-                                })),
-                              ),
-                            ],
+                                        Text("1. duration < 24 hrs "),
+                                        StreamBuilder(
+                                            stream: timeNow(),
+                                            builder: (context, snapshot) {
+                                              return Expanded(
+                                                child: Builder(builder: (context) {
+                                                  List<Task> todayTasksD = [];
+                                                  List<Task> todayTasksRcomp = [];
+                                                  List<Task> todayTasksRstart = [];
+                                                  List<Task> todayTasksRend = [];
+                                                  mapAll.values.forEach((element) {
+                                                    if (element.type == "1") {
+                                                      todayTasksD.add(element);
+                                                    } else {
+                                                      if (element.dateTimeRange![0].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11) &&
+                                                          element.dateTimeRange![0].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11)) {
+                                                        todayTasksRcomp.add(element);
+                                                      }
+                                                      // }else if(element.dateTimeRange![0].toString().substring(0, 11) == DateTime.now().toString().substring(0, 11) && element.dateTimeRange![0].hour!=){
+
+                                                      // }
+                                                    }
+                                                  });
+                                                  return DataTable2(
+                                                    columnSpacing: 12,
+                                                    horizontalMargin: 12,
+                                                    columns: [
+                                                      DataColumn2(label: Text("Tasks"), fixedWidth: width * 0.3, size: ColumnSize.L),
+                                                      DataColumn2(label: Text("Start at"), size: ColumnSize.S),
+                                                      DataColumn2(label: Text("Duration"), size: ColumnSize.S),
+                                                      DataColumn2(label: Text("Status"), size: ColumnSize.M),
+                                                    ],
+                                                    rows: [],
+                                                  );
+                                                }),
+                                              );
+                                            }),
+                                        Text("2. duration >= 24"),
+                                        Expanded(
+                                          child: DataTable2(columns: [
+                                            DataColumn2(label: Text("Tasks")),
+                                            DataColumn2(label: Text("Status")),
+                                          ], rows: []),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         },
                       ),

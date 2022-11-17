@@ -39,6 +39,11 @@ dependencies:
   equatable: ^2.0.0
   hive:
   hive_flutter:
+  scroll_snap_list: ^0.9.1
+  glassmorphism: ^3.0.0
+  new_gradient_app_bar: ^0.2.0
+  page_transition: "^2.0.9"
+  data_table_2: ^2.3.8
 
 
 dev_dependencies:
