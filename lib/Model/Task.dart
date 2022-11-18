@@ -25,7 +25,10 @@ class Task extends HiveObject {
   @HiveField(6)
   int taskID = 0;
 
-  Task(this.taskID, this.taskName, this.type, this.notifyChoice, [this.description, this.dailyTimeRange, this.dateTimeRange]);
+  @HiveField(7)
+  List<bool>? isCompleted = [false];
+
+  Task(this.taskID, this.taskName, this.type, this.notifyChoice, [this.description, this.dailyTimeRange, this.dateTimeRange, this.isCompleted]);
   Task.withDaily(this.taskID, this.taskName, this.type, this.notifyChoice, [this.description, this.dailyTimeRange]);
   Task.withRange(this.taskID, this.taskName, this.type, this.notifyChoice, [this.description, this.dateTimeRange]);
 

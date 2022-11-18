@@ -35,6 +35,12 @@ List<Color> colors2 = [
   Color.fromARGB(255, 93, 1, 109),
 ];
 
+List<Color> statusColors = [
+  Color.fromARGB(255, 0, 84, 3),
+  Color.fromARGB(255, 255, 27, 10),
+  Colors.yellow,
+];
+
 bool? isCompleted = false;
 
 class HomePage extends StatefulWidget {
@@ -511,33 +517,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   margin: EdgeInsets.only(top: width * _animationController3.value),
                                   child: Builder(builder: (context) {
                                     List<Task> todayTasksD = [];
-                                    List<Task> todayTasksRcomp = []; // initial and present lies completely on present day
-                                    List<Task> todayTasksRstart = []; //range initial lies on present day
-                                    List<Task> todayTasksRend = []; //range end lies on present day
-                                    List<Task> todayTasksRin = []; //presentDay lies in the range
+                                    List<int> Dailykeys = [];
+                                    // List<Task> todayTasksRcomp = []; // initial and present lies completely on present day
+                                    // List<Task> todayTasksRstart = []; //range initial lies on present day
+                                    // List<Task> todayTasksRend = []; //range end lies on present day
+                                    // List<Task> todayTasksRin = []; //presentDay lies in the range
                                     List<Task> todayTasksR = [];
+                                    List<int> Rangekeys = [];
 
                                     mapAll.values.forEach((element) {
                                       if (element.type == "1") {
                                         todayTasksD.add(element);
+                                        Dailykeys.add(element.key);
                                       } else {
                                         if (element.dateTimeRange![0].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11) &&
                                             element.dateTimeRange![1].toString().substring(0, 11) == context.read<DateTimeNowCubit>().state.toString().substring(0, 11)) {
-                                          todayTasksRcomp.add(element);
+                                          todayTasksR.add(element);
+                                          Rangekeys.add(element.key);
                                         } else if (element.dateTimeRange![0].toString().substring(0, 11) == DateTime.now().toString().substring(0, 11)) {
-                                          todayTasksRstart.add(element);
+                                          todayTasksR.add(element);
+                                          Rangekeys.add(element.key);
                                         } else if (element.dateTimeRange![1].toString().substring(0, 11) == DateTime.now().toString().substring(0, 11)) {
-                                          todayTasksRend.add(element);
+                                          Rangekeys.add(element.key);
+                                          todayTasksR.add(element);
                                         } else if (element.dateTimeRange![1].difference(context.read<DateTimeNowCubit>().state).inHours > (24 - context.read<DateTimeNowCubit>().state.hour) &&
                                             context.read<DateTimeNowCubit>().state.difference(element.dateTimeRange![0]).inHours > context.read<DateTimeNowCubit>().state.hour) {
-                                          todayTasksRin.add(element);
+                                          Rangekeys.add(element.key);
+                                          todayTasksR.add(element);
                                         }
                                       }
                                     });
-                                    todayTasksR.addAll(todayTasksRcomp);
-                                    todayTasksR.addAll(todayTasksRstart);
-                                    todayTasksR.addAll(todayTasksRend);
-                                    todayTasksR.addAll(todayTasksRin);
+                                    // todayTasksR.addAll(todayTasksRcomp);
+                                    // todayTasksR.addAll(todayTasksRstart);
+                                    // todayTasksR.addAll(todayTasksRend);
+                                    // todayTasksR.addAll(todayTasksRin);
                                     return AnimatedBuilder(
                                         animation: _animationController3,
                                         builder: (context, child) {
@@ -658,7 +671,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                 DataCell(Text(todayTasksD[index].taskName, style: GoogleFonts.acme())),
                                                                 DataCell(Text(todayTasksD[index].dailyTimeRange![0], style: GoogleFonts.acme())),
                                                                 DataCell(Text(
-                                                                    "${timeLeft[0]}:${timeLeft[1] < 10 ? "0${timeLeft[1]}" : timeLeft[1]}${timeLeft.length == 3 ? ":${timeLeft[2] < 10 ? "0${timeLeft[2]}" : timeLeft[2]}" : ""}",
+                                                                    "${timeLeft[0]}:${timeLeft[1] < 10 ? "0${timeLeft[1]}" : timeLeft[1]}${timeLeft.length == 3 ? ":${timeLeft[2] < 10 ? "0${timeLeft[2]}" : timeLeft[2]}" : ":00"}",
                                                                     style: GoogleFonts.acme())),
                                                                 DataCell(
                                                                   timeLeft.length == 3
@@ -666,7 +679,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                           children: [
                                                                             Text("on-going",
                                                                                 style: GoogleFonts.acme(
-                                                                                  color: Color.fromARGB(255, 0, 84, 3),
+                                                                                  color: statusColors[0], //Color.fromARGB(255, 0, 84, 3), Color.fromARGB(255, 255, 27, 10),Colors.yellow
                                                                                 )),
                                                                             SizedBox(
                                                                               width: 10,
@@ -675,23 +688,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                           ],
                                                                         )
                                                                       : timeLeft[0] == 0 && timeLeft[1] == 0
-                                                                          ? Row(
-                                                                              children: [
-                                                                                Text("Done?", style: GoogleFonts.acme(color: Color.fromARGB(255, 255, 27, 10))),
-                                                                                SizedBox(width: 11),
-                                                                                Checkbox(
-                                                                                    tristate: false,
-                                                                                    value: isCompleted,
-                                                                                    onChanged: ((value) {
-                                                                                      setState(() {
-                                                                                        isCompleted = !isCompleted!;
-                                                                                      });
-                                                                                    }))
-                                                                              ],
-                                                                            )
+                                                                          ? todayTasksD[index].isCompleted![0]
+                                                                              ? Row(children: [Text("completed", style: GoogleFonts.acme(color: statusColors[0])), Icon(Icons.check_box)])
+                                                                              : Row(
+                                                                                  children: [
+                                                                                    Text("Done?", style: GoogleFonts.acme(color: statusColors[1])),
+                                                                                    SizedBox(width: 11),
+                                                                                    Checkbox(
+                                                                                        tristate: false,
+                                                                                        value: todayTasksD[index].isCompleted![0],
+                                                                                        onChanged: ((value) {
+                                                                                          box.put(
+                                                                                              Dailykeys[index],
+                                                                                              Task(
+                                                                                                  todayTasksD[index].taskID,
+                                                                                                  todayTasksD[index].taskName,
+                                                                                                  todayTasksD[index].type,
+                                                                                                  todayTasksD[index].notifyChoice,
+                                                                                                  todayTasksD[index].description,
+                                                                                                  todayTasksD[index].dailyTimeRange,
+                                                                                                  todayTasksD[index].dateTimeRange,
+                                                                                                  [true]));
+                                                                                        }))
+                                                                                  ],
+                                                                                )
                                                                           : Row(
                                                                               children: [
-                                                                                Text("Yet to Start", style: GoogleFonts.acme(color: Colors.yellow)),
+                                                                                Text("Yet to Start", style: GoogleFonts.acme(color: statusColors[2])),
                                                                                 SizedBox(width: 2),
                                                                                 Icon(Icons.safety_check),
                                                                               ],
@@ -736,17 +759,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                 ),
                                                               ],
                                                               rows: List.generate(todayTasksR.length, (index) {
+                                                                List<bool>? completedList = todayTasksR[index].isCompleted;
                                                                 DateTime startTime = todayTasksR[index].dateTimeRange![0];
                                                                 DateTime endTime = todayTasksR[index].dateTimeRange![1];
                                                                 List Status = [];
                                                                 if (context.read<DateTimeNowCubit>().state.difference(startTime).inSeconds < 0) {
                                                                   Status.add("Yet to Start");
+                                                                  // completedList!.add(false);
                                                                 } else if (context.read<DateTimeNowCubit>().state.difference(startTime).inSeconds >= 0 &&
                                                                     context.read<DateTimeNowCubit>().state.difference(endTime).inSeconds <= 0) {
                                                                   Status.add("In Progress");
+                                                                  // completedList!.add(false);
                                                                 } else {
                                                                   Status.add("Done?");
+                                                                  // completedList!.add(false);
                                                                 }
+                                                                print(completedList);
                                                                 print(Status);
                                                                 return DataRow(cells: [
                                                                   DataCell(Text(todayTasksR[index].taskName, style: GoogleFonts.acme())),
@@ -756,25 +784,37 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     children: [
                                                                       Status[0] == "Done?"
-                                                                          ? Row(
-                                                                              children: [
-                                                                                Text(Status[0], style: GoogleFonts.acme(color: Color.fromARGB(255, 255, 27, 10))),
-                                                                                SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Checkbox(
-                                                                                    tristate: false,
-                                                                                    value: isCompleted,
-                                                                                    onChanged: ((value) {
-                                                                                      setState(() {
-                                                                                        isCompleted = !isCompleted!;
-                                                                                      });
-                                                                                    }))
-                                                                              ],
-                                                                            )
+                                                                          ? todayTasksR[index].isCompleted!.last
+                                                                              ? Row(children: [Text("completed", style: GoogleFonts.acme(color: statusColors[0])), Icon(Icons.check_box)])
+                                                                              : Row(
+                                                                                  children: [
+                                                                                    Text(Status[0], style: GoogleFonts.acme(color: statusColors[1])),
+                                                                                    SizedBox(
+                                                                                      width: 5,
+                                                                                    ),
+                                                                                    Checkbox(
+                                                                                        tristate: false,
+                                                                                        value: todayTasksR[index].isCompleted!.last,
+                                                                                        onChanged: ((value) {
+                                                                                          // completedList.replaceRange(completedList.length, completedList.length, [true]);
+                                                                                          box.put(
+                                                                                              Rangekeys[index],
+                                                                                              Task(
+                                                                                                todayTasksR[index].taskID,
+                                                                                                todayTasksR[index].taskName,
+                                                                                                todayTasksR[index].type,
+                                                                                                todayTasksR[index].notifyChoice,
+                                                                                                todayTasksR[index].description,
+                                                                                                todayTasksR[index].dailyTimeRange,
+                                                                                                todayTasksR[index].dateTimeRange,
+                                                                                                [true],
+                                                                                              ));
+                                                                                        }))
+                                                                                  ],
+                                                                                )
                                                                           : Container(),
-                                                                      Status[0] == "In Progress" ? Text(Status[0], style: GoogleFonts.acme(color: Color.fromARGB(255, 0, 107, 4))) : Container(),
-                                                                      Status[0] == "Yet to Start" ? Text(Status[0], style: GoogleFonts.acme(color: Color.fromARGB(255, 224, 202, 0))) : Container(),
+                                                                      Status[0] == "In Progress" ? Text(Status[0], style: GoogleFonts.acme(color: statusColors[0])) : Container(),
+                                                                      Status[0] == "Yet to Start" ? Text(Status[0], style: GoogleFonts.acme(color: statusColors[2])) : Container(),
                                                                     ],
                                                                   )),
                                                                 ]);
@@ -800,7 +840,5 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
       },
     );
-
-    // ignore: dead_code
   }
 }

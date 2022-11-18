@@ -24,13 +24,14 @@ class TaskAdapter extends TypeAdapter<Task> {
       fields[4] as String?,
       (fields[2] as List?)?.cast<String>(),
       (fields[3] as List?)?.cast<DateTime>(),
+      (fields[7] as List?)?.cast<bool>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Task obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.taskName)
       ..writeByte(1)
@@ -44,12 +45,18 @@ class TaskAdapter extends TypeAdapter<Task> {
       ..writeByte(5)
       ..write(obj.notifyChoice)
       ..writeByte(6)
-      ..write(obj.taskID);
+      ..write(obj.taskID)
+      ..writeByte(7)
+      ..write(obj.isCompleted);
   }
 
   @override
   int get hashCode => typeId.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is TaskAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TaskAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
