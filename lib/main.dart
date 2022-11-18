@@ -1,15 +1,16 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:scheduleyourday/Logic/LogicComponent.dart';
 import 'Screens/HomePage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'Model/Task.dart';
+import 'package:flutter/services.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
   await Hive.openBox<Task>("Schedules");
@@ -55,8 +56,9 @@ class MyApp extends StatelessWidget {
         title: "schedule app",
         // darkTheme: ThemeData.dark(),
         theme: ThemeData(
+          fontFamily: "Pacifico",
           primarySwatch: Colors.brown,
-          textTheme: Themes[0],
+          // textTheme: ,
         ),
 
         debugShowCheckedModeBanner: false,
@@ -66,7 +68,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-List<TextTheme> Themes = [
-  GoogleFonts.pacificoTextTheme(), //small hand written type
-  GoogleFonts.dancingScriptTextTheme(), //small hand written type
-];
+// List<TextTheme> Themes = [
+//   GoogleFonts.pacificoTextTheme(), //small hand written type
+//   GoogleFonts.dancingScriptTextTheme(), //small hand written type
+// ];

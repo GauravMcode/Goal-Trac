@@ -61,6 +61,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double? transformLogo;
   double? fadeLogo;
 
+  int animation1Duration = 3500;
+  int animation2Duration = 2000;
+  int animation3Duration = 1000;
+
   @override
   void initState() {
     super.initState();
@@ -72,8 +76,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     transformLogo ??= 0.0;
     fadeLogo ??= 0.0;
 
-    _animationController2 = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
-    _animationController3 = AnimationController(vsync: this, reverseDuration: Duration(milliseconds: 500), value: 1.0);
+    _animationController2 = AnimationController(vsync: this, duration: Duration(milliseconds: animation2Duration));
+    _animationController3 = AnimationController(vsync: this, reverseDuration: Duration(milliseconds: animation3Duration), value: 1.0);
     context.read<DateTimeNowCubit>().emitDateTime();
   }
 
@@ -103,7 +107,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (_animationController2.value == 0.0 && animationStatus1 != "AnimationStatus.completed") {
-      _animationController1 = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
+      _animationController1 = AnimationController(value: 0.58, vsync: this, duration: Duration(milliseconds: animation1Duration));
       _animationController1.forward();
     }
 
@@ -514,7 +518,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 AnimatedContainer(
                                   curve: Curves.ease,
                                   duration: Duration(milliseconds: 400),
-                                  margin: EdgeInsets.only(top: width * _animationController3.value),
+                                  margin: EdgeInsets.only(top: width * 1.2 * _animationController3.value),
                                   child: Builder(builder: (context) {
                                     List<Task> todayTasksD = [];
                                     List<int> Dailykeys = [];

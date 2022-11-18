@@ -42,7 +42,7 @@ Widget logoAppearWidget(
                         children: [
                           Text(
                             "Goal\n    Trac",
-                            style: GoogleFonts.pacifico(color: colors[2], fontStyle: FontStyle.italic, fontSize: 70),
+                            style: TextStyle(color: colors[2], fontStyle: FontStyle.italic, fontSize: 85),
                           ),
                           SizedBox(
                             width: width * 0.3,
@@ -79,7 +79,7 @@ Widget logoAppearWidget(
                           SizedBox(width: width * 0.1),
                           Text(
                             "Plan\nYour\nDay!",
-                            style: GoogleFonts.pacifico(color: colors[0], fontStyle: FontStyle.italic, fontSize: 30),
+                            style: TextStyle(color: colors[0], fontStyle: FontStyle.italic, fontSize: 30),
                           ),
                         ],
                       ),
@@ -125,7 +125,7 @@ Widget logoFadeWidget(double height, double width, Animation<double> _animation3
                             children: [
                               Text(
                                 "Goal\n    Trac",
-                                style: GoogleFonts.pacifico(fontStyle: FontStyle.italic, fontSize: 70),
+                                style: GoogleFonts.pacifico(fontStyle: FontStyle.italic, fontSize: 85),
                               ),
                               SizedBox(
                                 width: width * 0.3,
