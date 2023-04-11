@@ -13,7 +13,7 @@ import 'dart:math' as math;
 class MySchedule extends StatefulWidget {
   int scheduleNo;
 
-  MySchedule(this.scheduleNo);
+  MySchedule(this.scheduleNo, {super.key});
 
   @override
   State<MySchedule> createState() => _MyScheduleState(scheduleNo);
@@ -113,7 +113,7 @@ class _MyScheduleState extends State<MySchedule> {
                     ),
                   ],
                 ),
-                SizedBox(height: 0.01),
+                const SizedBox(height: 0.01),
 
                 BlocBuilder<ExpandItCubit, bool>(
                   builder: (context, isExpandedState) {
@@ -126,7 +126,7 @@ class _MyScheduleState extends State<MySchedule> {
                             print("123455");
                             // List<Task> listOfTasks = [];
                             // box.values.where((element) => element.taskID==0);
-                            final ids = Set();
+                            final ids = <dynamic>{};
                             List ListHere = box.keys.toList();
                             List uniqueItems = [];
                             for (var i = 1; i < ListHere.length; i++) {
@@ -136,18 +136,18 @@ class _MyScheduleState extends State<MySchedule> {
                             }
                             print(box.keys.length);
 
-                            if (box.values.length != 0) {
+                            if (box.values.isNotEmpty) {
                               // final listOfTasks = box.getAt(0)!. .toList().cast<Task>();
                               // print(box.values.where((element) => element.taskID == scheduleNo));
                             }
 
                             Map<dynamic, Task> mapAll = box.toMap();
                             Map<dynamic, Task> mapSchedlueNo = {};
-                            mapAll.values.forEach((element) {
+                            for (var element in mapAll.values) {
                               if (element.taskID == scheduleNo) {
                                 mapSchedlueNo.addAll({element.key: element});
                               }
-                            });
+                            }
                             List<Task> tasksList = mapSchedlueNo.values.toList();
                             final keysList = mapSchedlueNo.keys.toList();
                             // print("task id: ${tasksList[0].taskID}");
@@ -157,7 +157,7 @@ class _MyScheduleState extends State<MySchedule> {
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
+                                SizedBox(
                                   height: height * 0.68,
                                   width: width,
                                   child: ListView(
@@ -192,12 +192,12 @@ class _MyScheduleState extends State<MySchedule> {
                                                             onPressed: (() {
                                                               editTask(scheduleNo, task, keysList[index], context, height, width, _formKey);
                                                             }),
-                                                            icon: Icon(Icons.edit)),
+                                                            icon: const Icon(Icons.edit)),
                                                         IconButton(
                                                           onPressed: (() {
                                                             box.delete(keysList[index]);
                                                           }),
-                                                          icon: Icon(Icons.delete),
+                                                          icon: const Icon(Icons.delete),
                                                         )
                                                       ],
                                                     )
@@ -262,17 +262,17 @@ class _MyScheduleState extends State<MySchedule> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text("Delete All Schedules and Tasks"),
-                                                content: Text("Do you want to delete All Schedules?"),
+                                                title: const Text("Delete All Schedules and Tasks"),
+                                                content: const Text("Do you want to delete All Schedules?"),
                                                 actions: <Widget>[
                                                   MaterialButton(
-                                                    child: Text("Confirm"),
+                                                    child: const Text("Confirm"),
                                                     onPressed: () {
                                                       box.clear();
                                                     },
                                                   ),
                                                   MaterialButton(
-                                                    child: Text("cancel"),
+                                                    child: const Text("cancel"),
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                     },
@@ -281,8 +281,8 @@ class _MyScheduleState extends State<MySchedule> {
                                               );
                                             });
                                       },
-                                      child: Text("Clear All Schedules"),
                                       color: Colors.amber,
+                                      child: Text("Clear All Schedules"),
                                     ),
                                     MaterialButton(
                                       onPressed: () {
@@ -290,8 +290,8 @@ class _MyScheduleState extends State<MySchedule> {
 
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text("Back"),
                                       color: Colors.amber,
+                                      child: const Text("Back"),
                                     )
                                   ],
                                 )
@@ -406,8 +406,8 @@ editTask(int scheduleNo, Task task, index, BuildContext context, double height, 
     print("Daily");
     int L1 = taskToEdit.dailyTimeRange![0].length;
     int L2 = taskToEdit.dailyTimeRange![1].length;
-    final time1;
-    final time2;
+    final List<String> time1;
+    final List<String> time2;
 
     time1 = taskToEdit.dailyTimeRange![0].substring(0, 5).trimRight().split(":");
     time2 = taskToEdit.dailyTimeRange![1].substring(0, 5).trimRight().split(":");

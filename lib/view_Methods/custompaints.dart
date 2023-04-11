@@ -81,7 +81,6 @@ class LogoCustomPainter2 extends CustomPainter {
       ..shader = isSmall
           ? ui.Gradient.linear(Offset(size.height, size.width), Offset(size.height * 0.5, 0), colors.sublist(0, 2), [0.25, 0.9], TileMode.clamp)
           : ui.Gradient.linear(Offset(size.height, size.width), Offset(size.height * 0.5, 0), colors1, [0.25, 0.55, 0.9], TileMode.clamp);
-    ;
 
     Path path1 = Path();
     path1.moveTo(size.width * 0.5063750, size.height * 0.3455667);

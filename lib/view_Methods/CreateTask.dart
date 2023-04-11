@@ -29,14 +29,14 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
   String displayDate1 = "";
   String displayDate2 = "";
   String displayDate = "";
-  TimeOfDay? dailyTime1 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay? dailyTime2 = TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay? dailyTime1 = const TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay? dailyTime2 = const TimeOfDay(hour: 0, minute: 0);
 
   saveTask() {
     final box = Boxes.getSchedules();
-    List<DateTime> dateTimeList = context.read<RangeDurationCubit>().state.length != 0 ? [context.read<RangeDurationCubit>().state[0]!, context.read<RangeDurationCubit>().state[1]!] : [];
+    List<DateTime> dateTimeList = context.read<RangeDurationCubit>().state.isNotEmpty ? [context.read<RangeDurationCubit>().state[0]!, context.read<RangeDurationCubit>().state[1]!] : [];
     List<String> timeList =
-        context.read<DailyDurationCubit>().state.length != 0 ? [context.read<DailyDurationCubit>().state[0]!.format(context), context.read<DailyDurationCubit>().state[1]!.format(context)] : [];
+        context.read<DailyDurationCubit>().state.isNotEmpty ? [context.read<DailyDurationCubit>().state[0]!.format(context), context.read<DailyDurationCubit>().state[1]!.format(context)] : [];
 
     int numberOfTasks = box.keys.length;
 
@@ -57,9 +57,9 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
     // box.put("0", task);
     List<Task> listT = box.values.where((element) => element.taskID == scheduleNo).toList();
     Map<dynamic, Task> mapT = box.toMap();
-    listT.forEach((element) {
+    for (var element in listT) {
       mapT["$scheduleNo"] = element;
-    });
+    }
     mapT.addAll({"$scheduleNo+1": task});
 
     editMode //todo: work for the edit mode
@@ -79,18 +79,18 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
       duration: const Duration(milliseconds: 650),
       context: context,
       builder: (context) {
-        double _borderRadius = 40.0;
+        double borderRadius = 40.0;
         final box = Boxes.getSchedules();
         return AlertDialog(
           titlePadding: EdgeInsets.zero,
           title: Center(
               child: editMode
-                  ? Text("")
+                  ? const Text("")
                   : Text(
                       "Task ${box.values.length + 1}",
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     )),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_borderRadius)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
           elevation: 10.0,
           backgroundColor: colors[1].withOpacity(0.1),
           contentPadding: EdgeInsets.zero,
@@ -108,8 +108,8 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                     context.read<DisplayDropDownCubit>().empty();
                     context.read<NotifificationChoiceCubit>().empty();
                   }),
+                  style: ButtonStyle(shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(borderRadius))))),
                   child: Text("Back"),
-                  style: ButtonStyle(shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_borderRadius))))),
                 )),
                 Expanded(
                     child: ElevatedButton(
@@ -117,11 +117,11 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                     if ((context.read<DailyDurationCubit>().state.contains(null) || context.read<RangeDurationCubit>().state.contains(null))) {
                       showError("Select both the ranges. One cannot be null", context);
                     }
-                    if (context.read<DailyDurationCubit>().state.length == 0 && context.read<RangeDurationCubit>().state.length == 0) {
+                    if (context.read<DailyDurationCubit>().state.isEmpty && context.read<RangeDurationCubit>().state.isEmpty) {
                       showError("First select a Range", context);
                     }
                     if ((!context.read<DailyDurationCubit>().state.contains(null) && !context.read<RangeDurationCubit>().state.contains(null)) &&
-                        (context.read<DailyDurationCubit>().state.length != 0 || context.read<RangeDurationCubit>().state.length != 0)) {
+                        (context.read<DailyDurationCubit>().state.isNotEmpty || context.read<RangeDurationCubit>().state.isNotEmpty)) {
                       saveTask();
                     }
                     context.read<RangeDurationCubit>().empty();
@@ -129,8 +129,8 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                     context.read<DisplayDropDownCubit>().empty();
                     context.read<NotifificationChoiceCubit>().empty();
                   }),
+                  style: ButtonStyle(shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(borderRadius))))),
                   child: Text("Save"),
-                  style: ButtonStyle(shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_borderRadius))))),
                 )),
               ],
             )
@@ -155,7 +155,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                               height: height * 0.65,
                               width: width,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(_borderRadius),
+                                  borderRadius: BorderRadius.circular(borderRadius),
                                   gradient: LinearGradient(
                                     colors: [colors1[1], colors1[2]],
                                   )),
@@ -242,7 +242,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                                     durationDays = context.read<RangeDurationCubit>().state[1]?.difference(context.read<RangeDurationCubit>().state[0]!).inDays;
                                                     durationHours = context.read<RangeDurationCubit>().state[1]?.difference(context.read<RangeDurationCubit>().state[0]!).inHours;
                                                     durationMinutes = context.read<RangeDurationCubit>().state[1]?.difference(context.read<RangeDurationCubit>().state[0]!).inMinutes;
-                                                    displayDate = "${durationDays == 0 ? "Date: $displayDate1" : "$displayDate1-$displayDate2"}";
+                                                    displayDate = durationDays == 0 ? "Date: $displayDate1" : "$displayDate1-$displayDate2";
                                                     dropDownItem2 = displayDate;
                                                     context.read<DisplayDropDownCubit>().changeValue(displayDate);
                                                     print(context.read<RangeDurationCubit>().state);
@@ -251,7 +251,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                                   } else {
                                                     dailyTime1 = await showTimePicker(
                                                       context: context,
-                                                      initialTime: TimeOfDay(hour: 0, minute: 0),
+                                                      initialTime: const TimeOfDay(hour: 0, minute: 0),
                                                       confirmText: "Next",
                                                       helpText: "Start Time Of Task",
                                                     );
@@ -281,15 +281,15 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                     ),
                                     SizedBox(height: height * 0.02),
                                     Container(
-                                      child: (context.read<RangeDurationCubit>().state.length != 0 && durationHours != null && context.read<DisplayDropDownCubit>().state != "Daily")
+                                      child: (context.read<RangeDurationCubit>().state.isNotEmpty && durationHours != null && context.read<DisplayDropDownCubit>().state != "Daily")
                                           ? Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                Text("Duration :"),
+                                                const Text("Duration :"),
                                                 durationDays != 0
                                                     ? Container(
                                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), gradient: LinearGradient(colors: [colors[0], colors[1]])),
-                                                        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -305,7 +305,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                                         ),
                                                       )
                                                     : Container(
-                                                        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), gradient: LinearGradient(colors: [colors[0], colors[1]])),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -324,13 +324,13 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                           : Container(),
                                     ),
                                     Container(
-                                      child: (context.read<DailyDurationCubit>().state.length != 0 && durationHours != null && context.read<DisplayDropDownCubit>().state == "Daily")
+                                      child: (context.read<DailyDurationCubit>().state.isNotEmpty && durationHours != null && context.read<DisplayDropDownCubit>().state == "Daily")
                                           ? Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                Text("Duration"),
+                                                const Text("Duration"),
                                                 Container(
-                                                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                                                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), gradient: LinearGradient(colors: [colors[0], colors[1]])),
                                                   child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -375,8 +375,8 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                               controller: taskName,
                                               decoration: InputDecoration(
                                                 alignLabelWithHint: true,
-                                                contentPadding: EdgeInsets.all(5.0),
-                                                label: Padding(
+                                                contentPadding: const EdgeInsets.all(5.0),
+                                                label: const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text("Name of the Task"),
                                                 ),
@@ -401,7 +401,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                                 description = value;
                                               },
                                               decoration: InputDecoration(
-                                                label: Text("Description (optional)"),
+                                                label: const Text("Description (optional)"),
                                                 border: OutlineInputBorder(
                                                   borderRadius: BorderRadius.circular(10.0),
                                                 ),
@@ -412,7 +412,7 @@ createTask(int scheduleNo, BuildContext context, double height, double width, fo
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              Text("Select Frequency of Notifications:"),
+                                              const Text("Select Frequency of Notifications:"),
                                               SizedBox(
                                                 height: height * 0.01,
                                               ),
@@ -478,11 +478,11 @@ showError(String? errorMessage, BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Error"),
+          title: const Text("Error"),
           content: Text(errorMessage.toString()),
           actions: <Widget>[
             MaterialButton(
-              child: Text("Ok"),
+              child: const Text("Ok"),
               onPressed: () {
                 Navigator.of(context).pop();
               },

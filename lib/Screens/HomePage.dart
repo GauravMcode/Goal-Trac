@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -18,26 +17,26 @@ import 'package:data_table_2/data_table_2.dart';
 
 //maintain 2
 List<Color> colors = [
-  Color.fromARGB(255, 72, 142, 255),
-  Color.fromARGB(255, 60, 59, 59),
-  Color.fromARGB(255, 255, 239, 9),
+  const Color.fromARGB(255, 72, 142, 255),
+  const Color.fromARGB(255, 60, 59, 59),
+  const Color.fromARGB(255, 255, 239, 9),
 ];
 List<Color> colors1 = [
   Colors.amber,
-  Color.fromARGB(255, 255, 222, 102),
-  Color.fromARGB(255, 255, 171, 107),
+  const Color.fromARGB(255, 255, 222, 102),
+  const Color.fromARGB(255, 255, 171, 107),
 ];
 List<Color> colors2 = [
   // Colors.lightBlue.shade100,
   // Color.fromARGB(255, 251, 234, 106),
-  Color.fromARGB(255, 255, 40, 219),
+  const Color.fromARGB(255, 255, 40, 219),
 
-  Color.fromARGB(255, 93, 1, 109),
+  const Color.fromARGB(255, 93, 1, 109),
 ];
 
 List<Color> statusColors = [
-  Color.fromARGB(255, 0, 84, 3),
-  Color.fromARGB(255, 255, 27, 10),
+  const Color.fromARGB(255, 0, 84, 3),
+  const Color.fromARGB(255, 255, 27, 10),
   Colors.yellow,
 ];
 
@@ -162,20 +161,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     Future<Widget> bottomSheet(BuildContext context, double height, double width, {int scheduleNo = 0}) async {
       context.read<BottomSheetShownCubit>().openSheet();
-      AnimationController _animationController4 = AnimationController(vsync: this, duration: Duration(seconds: 1));
-      _animationController4.forward;
+      AnimationController animationController4 = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+      animationController4.forward;
       setState(() {});
       print(scheduleNo);
       return await showModalBottomSheet(
-        transitionAnimationController: _animationController4,
+        transitionAnimationController: animationController4,
         enableDrag: false,
         elevation: 40.0,
         isDismissible: false,
         // barrierColor: Color.fromARGB(0, 255, 253, 253),
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: colors[1], width: 3.0, strokeAlign: StrokeAlign.inside),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(60), topRight: Radius.circular(60)),
+          side: BorderSide(color: colors[1], width: 3.0, strokeAlign: heightLocal),
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(60), topRight: Radius.circular(60)),
         ),
         context: context,
         builder: ((context) {
@@ -189,7 +188,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               padding: EdgeInsets.all(width * 0.025),
               decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [colors[0], colors[1]]),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(60), topRight: Radius.circular(60)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(60), topRight: Radius.circular(60)),
               ),
               height: height * 0.85,
               child: Column(
@@ -206,7 +205,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     Stream timeNow() async* {
       while (true) {
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         yield context.read<DateTimeNowCubit>().emitDateTime();
       }
     }
@@ -238,7 +237,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             height: height,
                             decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                              stops: [0.0005, 0.9995],
+                              stops: const [0.0005, 0.9995],
                               transform: GradientRotation(math.pi * (0.4 * scalingLogo!) * (transformLogo != 0 ? (1 - transformLogo!) : 1.0)),
                               colors: colors2.reversed.toList(),
                               // center: Alignment(0.01, -0.3),
@@ -260,10 +259,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       final box = Boxes.getSchedules();
                       List listOfKeys = [];
                       Map<dynamic, Task> mapAll = box.toMap();
-                      if (mapAll.length != 0) {
-                        mapAll.values.forEach((element) {
+                      if (mapAll.isNotEmpty) {
+                        for (var element in mapAll.values) {
                           listOfKeys.add(element.taskID);
-                        });
+                        }
                       }
                       List Schedules = listOfKeys.toSet().toList();
                       bottomSheet(context, height, width, scheduleNo: Schedules.length);
@@ -287,7 +286,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     offset: Offset(-(1 - transformLogo!) * width, 0),
                                     child: AnimatedContainer(
                                       curve: Curves.ease,
-                                      duration: Duration(milliseconds: 1000),
+                                      duration: const Duration(milliseconds: 1000),
                                       height: createHeight,
                                       width: createWidth,
                                       alignment: createText == "Schedule" ? Alignment.center : Alignment.centerLeft,
@@ -317,10 +316,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         builder: (context, box, child) {
                           List listOfKeys = [];
                           Map<dynamic, Task> mapAll = box.toMap();
-                          if (mapAll.length != 0) {
-                            mapAll.values.forEach((element) {
+                          if (mapAll.isNotEmpty) {
+                            for (var element in mapAll.values) {
                               listOfKeys.add(element.taskID);
-                            });
+                            }
                           }
                           print(listOfKeys);
                           //to get unique scheduleNo:
@@ -334,7 +333,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           // }
                           print(listOfKeys.toSet().toList());
                           print(keysList);
-                          return Container(
+                          return SizedBox(
                             width: width,
                             height: height,
                             child: ListView(
@@ -345,7 +344,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       ? AnimatedContainer(
                                           margin: EdgeInsets.only(right: width * _animationController3.value),
                                           curve: Curves.ease,
-                                          duration: Duration(milliseconds: 400),
+                                          duration: const Duration(milliseconds: 400),
                                           height: height * 0.05,
                                           width: width,
                                           alignment: Alignment.center,
@@ -358,7 +357,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 AnimatedContainer(
                                   margin: EdgeInsets.only(left: width * _animationController3.value),
                                   alignment: Alignment.topLeft,
-                                  duration: Duration(milliseconds: 400),
+                                  duration: const Duration(milliseconds: 400),
                                   curve: Curves.ease,
                                   width: width * 2,
                                   height: height * 0.295,
@@ -378,20 +377,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             Card(
                                               elevation: 30,
                                               borderOnForeground: true,
-                                              color: Color.fromARGB(0, 255, 255, 255),
+                                              color: const Color.fromARGB(0, 255, 255, 255),
                                               child: GlassmorphicContainer(
                                                 alignment: Alignment.centerLeft,
-                                                padding: EdgeInsets.all(5),
+                                                padding: const EdgeInsets.all(5),
                                                 blur: 10,
                                                 borderGradient: LinearGradient(
-                                                  colors: [Color(0xFF0FFFF).withOpacity(1), Color(0xFFFFFFF), Color(0xFF0FFFF).withOpacity(1)],
+                                                  colors: [const Color(0x0ff0ffff).withOpacity(1), const Color(0x0fffffff), const Color(0x0ff0ffff).withOpacity(1)],
                                                 ),
                                                 linearGradient: LinearGradient(
                                                   begin: Alignment.topLeft,
                                                   end: Alignment.bottomRight,
                                                   colors: [
-                                                    Color(0xFF0FFFF).withOpacity(0.2),
-                                                    Color(0xFF0FFFF).withOpacity(0.2),
+                                                    const Color(0x0ff0ffff).withOpacity(0.2),
+                                                    const Color(0x0ff0ffff).withOpacity(0.2),
                                                   ],
                                                 ),
                                                 border: 2,
@@ -423,7 +422,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                     });
                                                                     bottomSheet(context, height, width, scheduleNo: schedule);
                                                                   },
-                                                                  icon: Icon(Icons.edit_note_outlined),
+                                                                  icon: const Icon(Icons.edit_note_outlined),
                                                                   iconSize: 20,
                                                                   color: colors1[1],
                                                                 ),
@@ -438,9 +437,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                       PageTransition(
                                                                           child: ScheduleDetails(schedule, index + 1),
                                                                           fullscreenDialog: true,
-                                                                          reverseDuration: Duration(milliseconds: 600),
-                                                                          duration: Duration(milliseconds: 800),
-                                                                          alignment: Alignment(0.0, -0.5),
+                                                                          reverseDuration: const Duration(milliseconds: 600),
+                                                                          duration: const Duration(milliseconds: 800),
+                                                                          alignment: const Alignment(0.0, -0.5),
                                                                           type: PageTransitionType.size,
                                                                           childCurrent: widget)
                                                                       // MaterialPageRoute(builder: ((context) {
@@ -448,7 +447,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                       // })),
                                                                       );
                                                                 },
-                                                                icon: Icon(Icons.open_in_new_rounded),
+                                                                icon: const Icon(Icons.open_in_new_rounded),
                                                                 iconSize: 20,
                                                                 color: colors1[1],
                                                               ),
@@ -463,7 +462,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                       children: [
                                                         SizedBox(width: Cwidth * 0.3),
                                                         Container(
-                                                            padding: EdgeInsets.all(5.0),
+                                                            padding: const EdgeInsets.all(5.0),
                                                             decoration: BoxDecoration(gradient: LinearGradient(colors: colors2), borderRadius: BorderRadius.circular(15)),
                                                             child: Text("Tasks(${tasksList.length}):",
                                                                 style: TextStyle(
@@ -476,7 +475,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     SizedBox(height: Chieght * 0.02),
                                                     Container(
                                                       alignment: Alignment.topLeft,
-                                                      padding: EdgeInsets.all(5.0),
+                                                      padding: const EdgeInsets.all(5.0),
                                                       margin: EdgeInsets.only(left: Cwidth * 0.025),
                                                       decoration: BoxDecoration(gradient: LinearGradient(colors: [colors[0], colors[1]]), borderRadius: BorderRadius.circular(20.0)),
                                                       width: Cwidth * 0.95,
@@ -488,7 +487,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             itemBuilder: ((context, index) {
                                                               return Row(
                                                                 children: [
-                                                                  Container(
+                                                                  SizedBox(
                                                                     width: Cwidth * 0.62,
                                                                     child: SingleChildScrollView(
                                                                       scrollDirection: Axis.horizontal,
@@ -508,7 +507,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                                 // height: height * 0.05,
                                                 )
                                           ],
@@ -517,7 +516,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                                 AnimatedContainer(
                                   curve: Curves.ease,
-                                  duration: Duration(milliseconds: 400),
+                                  duration: const Duration(milliseconds: 400),
                                   margin: EdgeInsets.only(top: width * 1.2 * _animationController3.value),
                                   child: Builder(builder: (context) {
                                     List<Task> todayTasksD = [];
@@ -529,7 +528,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     List<Task> todayTasksR = [];
                                     List<int> Rangekeys = [];
 
-                                    mapAll.values.forEach((element) {
+                                    for (var element in mapAll.values) {
                                       if (element.type == "1") {
                                         todayTasksD.add(element);
                                         Dailykeys.add(element.key);
@@ -550,7 +549,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           todayTasksR.add(element);
                                         }
                                       }
-                                    });
+                                    }
                                     // todayTasksR.addAll(todayTasksRcomp);
                                     // todayTasksR.addAll(todayTasksRstart);
                                     // todayTasksR.addAll(todayTasksRend);
@@ -559,7 +558,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         animation: _animationController3,
                                         builder: (context, child) {
                                           return Card(
-                                            color: Color.fromARGB(0, 255, 255, 255),
+                                            color: const Color.fromARGB(0, 255, 255, 255),
                                             margin: EdgeInsets.only(left: width * 0.025, right: width * 0.025),
                                             elevation: 20,
                                             child: GlassmorphicContainer(
@@ -567,11 +566,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               height: height,
                                               alignment: Alignment.topCenter,
                                               blur: 10,
-                                              borderGradient: LinearGradient(colors: [Color(0xFF0FFFF).withOpacity(1), Color(0xFFFFFFF), Color(0xFF0FFFF).withOpacity(1)]),
+                                              borderGradient: LinearGradient(colors: [const Color(0x0ff0ffff).withOpacity(1), const Color(0x0fffffff), const Color(0x0ff0ffff).withOpacity(1)]),
                                               linearGradient: LinearGradient(
                                                 begin: Alignment.topLeft,
                                                 end: Alignment.bottomRight,
-                                                colors: [Color(0xFF0FFFF).withOpacity(0.2), Color(0xFF0FFFF).withOpacity(0.2)],
+                                                colors: [const Color(0x0ff0ffff).withOpacity(0.2), const Color(0x0ff0ffff).withOpacity(0.2)],
                                               ),
                                               border: 2,
                                               borderRadius: 20,
@@ -586,7 +585,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                           Text(
                                                               "${context.read<DateTimeNowCubit>().state.day}-${context.read<DateTimeNowCubit>().state.month}-${context.read<DateTimeNowCubit>().state.year}",
                                                               style: GoogleFonts.acme()),
-                                                          Text("Today's Tasks"),
+                                                          const Text("Today's Tasks"),
                                                           Text(
                                                               "${TimeOfDay.fromDateTime(context.read<DateTimeNowCubit>().state).format(context)} ${context.read<DateTimeNowCubit>().state.second} seconds",
                                                               style: GoogleFonts.acme()),
@@ -594,7 +593,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                       );
                                                     },
                                                   ),
-                                                  Text("1. Daily Tasks"),
+                                                  const Text("1. Daily Tasks"),
                                                   StreamBuilder(
                                                       stream: timeNow(),
                                                       builder: (context, snapshot) {
@@ -605,21 +604,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             horizontalMargin: 0,
                                                             columns: [
                                                               DataColumn2(
-                                                                label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.28, color: Colors.yellow, child: Text("Tasks")),
+                                                                label: Container(
+                                                                    alignment: Alignment.center, height: height * 0.05, width: width * 0.28, color: Colors.yellow, child: const Text("Tasks")),
                                                                 fixedWidth: width * 0.28,
                                                               ),
                                                               DataColumn2(
-                                                                label:
-                                                                    Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: Text("Start at")),
+                                                                label: Container(
+                                                                    alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: const Text("Start at")),
                                                                 fixedWidth: width * 0.18,
                                                               ),
                                                               DataColumn2(
-                                                                label:
-                                                                    Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: Text("Time Left")),
+                                                                label: Container(
+                                                                    alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: const Text("Time Left")),
                                                                 fixedWidth: width * 0.18,
                                                               ),
                                                               DataColumn2(
-                                                                label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.24, color: Colors.yellow, child: Text("status")),
+                                                                label: Container(
+                                                                    alignment: Alignment.center, height: height * 0.05, width: width * 0.24, color: Colors.yellow, child: const Text("status")),
                                                                 fixedWidth: width * 0.24,
                                                               ),
                                                             ],
@@ -685,19 +686,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                                 style: GoogleFonts.acme(
                                                                                   color: statusColors[0], //Color.fromARGB(255, 0, 84, 3), Color.fromARGB(255, 255, 27, 10),Colors.yellow
                                                                                 )),
-                                                                            SizedBox(
+                                                                            const SizedBox(
                                                                               width: 10,
                                                                             ),
-                                                                            Icon(Icons.watch_later_outlined),
+                                                                            const Icon(Icons.watch_later_outlined),
                                                                           ],
                                                                         )
                                                                       : timeLeft[0] == 0 && timeLeft[1] == 0
                                                                           ? todayTasksD[index].isCompleted![0]
-                                                                              ? Row(children: [Text("completed", style: GoogleFonts.acme(color: statusColors[0])), Icon(Icons.check_box)])
+                                                                              ? Row(children: [Text("completed", style: GoogleFonts.acme(color: statusColors[0])), const Icon(Icons.check_box)])
                                                                               : Row(
                                                                                   children: [
                                                                                     Text("Done?", style: GoogleFonts.acme(color: statusColors[1])),
-                                                                                    SizedBox(width: 11),
+                                                                                    const SizedBox(width: 11),
                                                                                     Checkbox(
                                                                                         tristate: false,
                                                                                         value: todayTasksD[index].isCompleted![0],
@@ -719,8 +720,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                           : Row(
                                                                               children: [
                                                                                 Text("Yet to Start", style: GoogleFonts.acme(color: statusColors[2])),
-                                                                                SizedBox(width: 2),
-                                                                                Icon(Icons.safety_check),
+                                                                                const SizedBox(width: 2),
+                                                                                const Icon(Icons.safety_check),
                                                                               ],
                                                                             ),
                                                                 )
@@ -732,7 +733,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                   SizedBox(
                                                     height: height * 0.05,
                                                   ),
-                                                  Text("2. Specifice  Date Tasks"),
+                                                  const Text("2. Specifice  Date Tasks"),
                                                   StreamBuilder(
                                                       stream: timeNow(),
                                                       builder: (context, snapshot) {
@@ -743,22 +744,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                               horizontalMargin: 10,
                                                               columns: [
                                                                 DataColumn2(
-                                                                  label: Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.28, color: Colors.yellow, child: Text("Tasks")),
+                                                                  label: Container(
+                                                                      alignment: Alignment.center, height: height * 0.05, width: width * 0.28, color: Colors.yellow, child: const Text("Tasks")),
                                                                   fixedWidth: width * 0.28,
                                                                 ),
                                                                 DataColumn2(
                                                                   label: Container(
-                                                                      alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: Text("Start Date")),
+                                                                      alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: const Text("Start Date")),
                                                                   fixedWidth: width * 0.18,
                                                                 ),
                                                                 DataColumn2(
-                                                                  label:
-                                                                      Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: Text("End Date")),
+                                                                  label: Container(
+                                                                      alignment: Alignment.center, height: height * 0.05, width: width * 0.18, color: Colors.yellow, child: const Text("End Date")),
                                                                   fixedWidth: width * 0.18,
                                                                 ),
                                                                 DataColumn2(
-                                                                  label:
-                                                                      Container(alignment: Alignment.center, height: height * 0.05, width: width * 0.24, color: Colors.yellow, child: Text("status")),
+                                                                  label: Container(
+                                                                      alignment: Alignment.center, height: height * 0.05, width: width * 0.24, color: Colors.yellow, child: const Text("status")),
                                                                   fixedWidth: width * 0.24,
                                                                 ),
                                                               ],
@@ -789,11 +791,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                     children: [
                                                                       Status[0] == "Done?"
                                                                           ? todayTasksR[index].isCompleted!.last
-                                                                              ? Row(children: [Text("completed", style: GoogleFonts.acme(color: statusColors[0])), Icon(Icons.check_box)])
+                                                                              ? Row(children: [Text("completed", style: GoogleFonts.acme(color: statusColors[0])), const Icon(Icons.check_box)])
                                                                               : Row(
                                                                                   children: [
                                                                                     Text(Status[0], style: GoogleFonts.acme(color: statusColors[1])),
-                                                                                    SizedBox(
+                                                                                    const SizedBox(
                                                                                       width: 5,
                                                                                     ),
                                                                                     Checkbox(

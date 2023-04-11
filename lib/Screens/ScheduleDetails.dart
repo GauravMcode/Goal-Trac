@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scheduleyourday/Screens/HomePage.dart';
-import 'package:scheduleyourday/view_Methods/custompaints.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scheduleyourday/Model/Task.dart';
 import 'package:scheduleyourday/Logic/boxes.dart';
@@ -13,7 +11,7 @@ import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 class ScheduleDetails extends StatefulWidget {
   int scheduleNo;
   int scheduleIndex;
-  ScheduleDetails(this.scheduleNo, this.scheduleIndex);
+  ScheduleDetails(this.scheduleNo, this.scheduleIndex, {super.key});
 
   @override
   State<ScheduleDetails> createState() => _ScheduleDetailsState(scheduleNo, scheduleIndex);
@@ -36,7 +34,7 @@ class _ScheduleDetailsState extends State<ScheduleDetails> {
             onPressed: (() {
               Navigator.pop(context);
             }),
-            icon: Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.arrow_back)),
         title: Text("Schedule $scheduleIndex"),
         centerTitle: true,
       ),
@@ -54,7 +52,7 @@ class _ScheduleDetailsState extends State<ScheduleDetails> {
                         ValueListenableBuilder<Box<Task>>(
                           valueListenable: Boxes.getSchedules().listenable(),
                           builder: ((context, box, child) {
-                            final ids = Set();
+                            final ids = <dynamic>{};
                             List ListHere = box.keys.toList();
                             List uniqueItems = [];
                             for (var i = 1; i < ListHere.length; i++) {
@@ -65,18 +63,18 @@ class _ScheduleDetailsState extends State<ScheduleDetails> {
 
                             Map<dynamic, Task> mapAll = box.toMap();
                             Map<dynamic, Task> mapSchedlueNo = {};
-                            mapAll.values.forEach((element) {
+                            for (var element in mapAll.values) {
                               if (element.taskID == scheduleNo) {
                                 mapSchedlueNo.addAll({element.key: element});
                               }
-                            });
+                            }
                             List<Task> tasksList = mapSchedlueNo.values.toList();
                             final keysList = mapSchedlueNo.keys.toList();
                             // print("task id: ${tasksList[0].taskID}");
                             print(keysList);
                             print(mapAll);
                             print(mapSchedlueNo);
-                            return Container(
+                            return SizedBox(
                               height: height * 0.5,
                               // width: width * 0.8,
                               child: ListView.builder(

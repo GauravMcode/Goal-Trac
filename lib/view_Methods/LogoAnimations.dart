@@ -10,9 +10,9 @@ import 'package:google_fonts/google_fonts.dart';
 Widget logoAppearWidget(
   double height,
   double width,
-  AnimationController _animationController1,
-  _animationController2,
-  _animationController3,
+  AnimationController animationController1,
+  animationController2,
+  animationController3,
   double? scalingLogo,
   double? transformLogo,
 ) {
@@ -23,14 +23,14 @@ Widget logoAppearWidget(
       Positioned(
         left: 0,
         top: Pheight,
-        child: Container(
+        child: SizedBox(
           height: logoHeight,
           width: width * 1.4,
           child: AnimatedBuilder(
-              animation: _animationController1,
+              animation: animationController1,
               builder: (context, child) {
                 return Transform.scale(
-                  scale: _animationController1.value,
+                  scale: animationController1.value,
                   child: CustomPaint(
                     painter: LogoCustomPainter1(true),
                     child: Container(
@@ -59,10 +59,10 @@ Widget logoAppearWidget(
         left: 0,
         top: Pheight,
         child: AnimatedBuilder(
-            animation: _animationController2,
+            animation: animationController2,
             builder: (context, child) {
               return Transform.translate(
-                offset: Offset((1 - _animationController2.value!) * width, 0),
+                offset: Offset((1 - animationController2.value!) * width, 0),
                 child: SizedBox(
                   height: logoHeight,
                   width: width * 1.4,
@@ -93,7 +93,7 @@ Widget logoAppearWidget(
   );
 }
 
-Widget logoFadeWidget(double height, double width, Animation<double> _animation3, double? scalingLogo, double? transformLogo, AnimationController animationController3) {
+Widget logoFadeWidget(double height, double width, Animation<double> animation3, double? scalingLogo, double? transformLogo, AnimationController animationController3) {
   double Pheight = height * 0.2;
   double logoHeight = height * 0.8;
   double logoWidth = width * 1.35;
@@ -102,7 +102,7 @@ Widget logoFadeWidget(double height, double width, Animation<double> _animation3
       Positioned(
         left: 0,
         top: Pheight,
-        child: Container(
+        child: SizedBox(
           height: logoHeight,
           width: logoWidth,
           child: AnimatedBuilder(
@@ -113,13 +113,13 @@ Widget logoFadeWidget(double height, double width, Animation<double> _animation3
                   child: CustomPaint(
                     painter: LogoCustomPainter1(false),
                     child: FadeTransition(
-                      opacity: _animation3,
+                      opacity: animation3,
                       child: Container(
                         alignment: Alignment.center,
                         width: width * 0.20,
                         height: height * 0.08,
                         child: FadeTransition(
-                          opacity: _animation3,
+                          opacity: animation3,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -159,7 +159,7 @@ Widget logoFadeWidget(double height, double width, Animation<double> _animation3
                       width: width * 0.20,
                       height: height * 0.08,
                       child: FadeTransition(
-                        opacity: _animation3,
+                        opacity: animation3,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
